@@ -3,7 +3,19 @@ import os,re,urllib,urllib2
 import xbmc, xbmcgui
 import cookielib
 
-header_string='Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36'
+# load cookie
+def initCookie():
+    # if exist load file and cookie information 
+    if (os.path.isfile(cookiepath)):
+        cj.load(cookiepath, False, False)
+        #for index, cookie in enumerate(cj):
+            #False          
+    else:             
+        False 
+
+# save cookie to file
+def updateCookie():
+    cj.save(cookiepath)
 
 def check_login(source_login,username):
     logged_in_string=username
@@ -13,18 +25,20 @@ def check_login(source_login,username):
         return False
 		
 def openUrl(url):
+    initCookie()
     req=urllib2.Request(url)
     req.add_header('User-Agent',header_string)
     response=urllib2.urlopen(req)
     source=response.read()
     response.close()
+    updateCookie()
     return source
 	
 def doLogin(cookiepath,username,password,url_to_open):
     #check if user has supplied only a folder path, or a full path
     if not os.path.isfile(cookiepath):
         #if the user supplied only a folder path, append on to the end of the path a filename.
-        cookiepath=os.path.join(cookiepath,os.path.join(xbmc.translatePath('special://temp'),'cookies_neterratv.r1.lwp'))
+        cookiepath=os.path.join(cookiepath,cookie_path,cookie_file)
     #delete any old version of the cookie file
     try:
         os.remove(cookiepath)
@@ -33,9 +47,6 @@ def doLogin(cookiepath,username,password,url_to_open):
 
     if username and password:
         login_url=url_to_open
-        cj = cookielib.LWPCookieJar()
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-        urllib2.install_opener(opener)
         #get the CSRF token
         regexCSRF = r"CSRF_TOKEN\":\"(.*)\",\""
         req = urllib2.Request(login_url)
@@ -56,8 +67,20 @@ def doLogin(cookiepath,username,password,url_to_open):
         response.close()
         login=check_login(source_login,username)
         if login==True:
-            cj.save(cookiepath)
+            updateCookie()
             return source_login
         else:
             xbmcgui.Dialog().notification('[ Login ERROR ]','Wrong username or password!',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
             raise SystemExit
+
+cookie_file='cookies_neterratv.r1.lwp'
+cookie_path=os.path.join(xbmc.translatePath('special://temp'))
+header_string='Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36'
+
+# cookies
+cookiepath=''
+cookiepath=os.path.join(cookiepath,cookie_path,cookie_file)
+cj = cookielib.LWPCookieJar()
+opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+urllib2.install_opener(opener)
+initCookie()

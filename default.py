@@ -1,4 +1,21 @@
 # -*- coding: utf-8 -*-
+#
+#     Copyright (C) 2018 mr.olix@gmail.com
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+
 import re,os,urllib2,urllib
 import xbmcplugin,xbmcgui,xbmcaddon
 import weblogin
@@ -11,26 +28,35 @@ BASE='https://neterra.tv/'
 header_string='Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36'
 url_login=BASE+'sign-in'
 url_live=BASE+'live'
-#url_videos=BASE+'videos'
+url_videos=BASE+'videos'
 
 def LIST_CHANNELS():
+    channel_source=weblogin.doLogin('',username,password,url_login)
     channel_source=weblogin.openUrl(url_live)
     match=re.compile('<a href="(.+?)".*\n.*\n.*\n.*>(.+?)<\/span>.*\n.*<img src="(.+?)"').findall(channel_source)
     for url_chann,name,thumbnail in match:
         addDir(name,url_chann,1,thumbnail)
 
-#def LIST_REC():
-#    channel_source=weblogin.openUrl(url_videos)
-#    match=re.compile('<a href="(.+?)"\n.*class="side-nav__item.*\n.*>(.+?)<\/a>').findall(channel_source)
-#    for url_chann,name in match:
-#        addDir(name,url_chann,2,'')
-		
+def LIST_REC():
+    channel_source=weblogin.doLogin('',username,password,url_login)
+    channel_source=weblogin.openUrl(url_videos)
+    match=re.compile('<li>\s*.*<a href="(.*)"\s*class="side.nav__item "\s*>(.*)<\/a>').findall(channel_source)
+    for url_chann,name in match:
+        addDir(name,url_chann,2,'')
+
+def INDEX_REC(name,url):
+    channel_source=weblogin.doLogin('',username,password,url_login)
+    channel_source=weblogin.openUrl(url)
+	
 def INDEX_CHANNELS(name,url):
     channel_source=weblogin.doLogin('',username,password,url_login)
     channel_source=weblogin.openUrl(url)
     match=re.compile('"link":"(.+?)","formats').findall(channel_source)
     stream = match[0].replace("\/","/")
-    addLink(name,stream,'')
+    if 'rtmps' in stream:
+        xbmcgui.Dialog().notification('Switch to HTML 5 player','Switch to HTML 5 player',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
+        raise SystemExit
+    addLink('PLAY: '+name,stream,'')
     
 def get_params():
     param=[]
@@ -88,7 +114,12 @@ xbmc.log("URL: "+str(url))
 xbmc.log("Name: "+str(name))
 
 if mode==None or url==None or len(url)<1:
+    dialog=xbmcgui.Dialog()
+    ret=dialog.select('',['НА ЖИВО','НА ЗАПИС'])
+    if(ret==0):
         LIST_CHANNELS()
+    elif(ret==1):
+        LIST_REC()
 
 elif mode==1:
     INDEX_CHANNELS(name,url)
