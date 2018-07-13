@@ -1,5 +1,5 @@
 # NETERRA R1
-Video plugin for https://neterra.tv/. Free account is required.
+Video plugin for https://neterra.tv/. It requires an account and monthly fee to be able to watch TV Programs. 
 
 Readme for Kodi NETERRA R1 plugin created zinobg [at] gmail.com
 
