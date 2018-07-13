@@ -1,4 +1,4 @@
-# seirsanduk
+# NETERRA R1
 Video plugin for https://neterra.tv/. Free account is required.
 
 Readme for Kodi NETERRA R1 plugin created zinobg [at] gmail.com
