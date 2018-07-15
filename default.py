@@ -21,8 +21,10 @@ import xbmcplugin,xbmcgui,xbmcaddon
 import weblogin
 
 # Getting username and password from addon settings
-username=xbmcaddon.Addon().getSetting('username')
-password=xbmcaddon.Addon().getSetting('password')
+addon=xbmcaddon.Addon()
+username=addon.getSetting('username')
+password=addon.getSetting('password')
+videoquality=addon.getSetting('highvideoquality')
 
 BASE='https://neterra.tv/'
 header_string='Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36'
@@ -35,7 +37,8 @@ def LIST_CHANNELS():
     channel_source=weblogin.openUrl(url_live)
     match=re.compile('<a href="(.+?)".*\n.*\n.*\n.*>(.+?)<\/span>.*\n.*<img src="(.+?)"').findall(channel_source)
     for url_chann,name,thumbnail in match:
-        url_chann=url_chann+"?quality=25&type=html"
+        if (videoquality=="true"):
+            url_chann=url_chann+"?quality=25&type=html"
         addDir(name,url_chann,1,thumbnail)
 
 def LIST_VID():
@@ -61,7 +64,8 @@ def INDEX_VID_CAT(name,url):
     channel_source=weblogin.openUrl(url)
     match=re.compile('<a href="(.+?)".*\n.*class="playlist-item".*\n.*\n.*<div class="playlist-item__title">.*\n.*<p>(.+?)<\/p>').findall(channel_source)
     for url,name in match:
-        url=url+"?quality=25&type=html"
+        if (videoquality=="true"):
+            url=url+"?quality=25&type=html"
         addDir(name,url,4,'')
 
 def INDEX_VID_STREAM(name,url):
