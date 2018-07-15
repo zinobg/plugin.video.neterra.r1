@@ -35,19 +35,45 @@ def LIST_CHANNELS():
     channel_source=weblogin.openUrl(url_live)
     match=re.compile('<a href="(.+?)".*\n.*\n.*\n.*>(.+?)<\/span>.*\n.*<img src="(.+?)"').findall(channel_source)
     for url_chann,name,thumbnail in match:
+        url_chann=url_chann+"?quality=25&type=html"
         addDir(name,url_chann,1,thumbnail)
 
-def LIST_REC():
+def LIST_VID():
     channel_source=weblogin.doLogin('',username,password,url_login)
     channel_source=weblogin.openUrl(url_videos)
-    match=re.compile('<li>\s*.*<a href="(.*)"\s*class="side.nav__item "\s*>(.*)<\/a>').findall(channel_source)
+    match=re.compile('<li>\s*.*<a href="(.+?)"\s*class="side-nav__item.*"\s*>(.+?)<\/a>').findall(channel_source)
     for url_chann,name in match:
         addDir(name,url_chann,2,'')
 
-def INDEX_REC(name,url):
+def INDEX_VID(name,url):
     channel_source=weblogin.doLogin('',username,password,url_login)
     channel_source=weblogin.openUrl(url)
-	
+    match=re.compile(',{"id":(.+?),"tag":"(.+?)","name":"(.+?)"').findall(channel_source)
+    for id,url,name in match:
+        url=url_videos+"/"+url
+        try:
+            name=name.decode('unicode-escape').encode('utf-8')
+        except:
+            pass
+        addDir(name,url,3,'')
+
+def INDEX_VID_CAT(name,url):
+    channel_source=weblogin.openUrl(url)
+    match=re.compile('<a href="(.+?)".*\n.*class="playlist-item".*\n.*\n.*<div class="playlist-item__title">.*\n.*<p>(.+?)<\/p>').findall(channel_source)
+    for url,name in match:
+        url=url+"?quality=25&type=html"
+        addDir(name,url,4,'')
+
+def INDEX_VID_STREAM(name,url):
+    channel_source=weblogin.openUrl(url)
+    match=re.compile(',"link":"(.+?)","formats"').findall(channel_source)
+    stream = match[0].replace("\/","/")
+    if 'rtmps' in stream:
+        xbmcgui.Dialog().notification('Switch to HTML 5 player','Switch to HTML 5 player',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
+        raise SystemExit
+    addLink('PLAY: '+name,stream,'')
+        
+    
 def INDEX_CHANNELS(name,url):
     channel_source=weblogin.doLogin('',username,password,url_login)
     channel_source=weblogin.openUrl(url)
@@ -115,16 +141,22 @@ xbmc.log("Name: "+str(name))
 
 if mode==None or url==None or len(url)<1:
     dialog=xbmcgui.Dialog()
-    ret=dialog.select('',['НА ЖИВО','НА ЗАПИС'])
+    ret=dialog.select('',['ГЛЕДАЙ','ВИДЕОТЕКА'])
     if(ret==0):
         LIST_CHANNELS()
     elif(ret==1):
-        LIST_REC()
+        LIST_VID()
 
 elif mode==1:
     INDEX_CHANNELS(name,url)
 
 elif mode==2:
-    INDEX_REC(name,url)
+    INDEX_VID(name,url)
+
+elif mode==3:
+    INDEX_VID_CAT(name,url)
+
+elif mode==4:
+    INDEX_VID_STREAM(name,url)
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
