@@ -62,7 +62,7 @@ def INDEX_VID(name,url):
 
 def INDEX_VID_CAT(name,url):
     channel_source=weblogin.openUrl(url)
-    match=re.compile('<a href="(.+?)".*\n.*class="playlist-item".*\n.*\n.*<div class="playlist-item__title">.*\n.*<p>(.+?)<\/p>').findall(channel_source)
+    match=re.compile('<a href="(.+?)"\n.*\n.*\n.*<span class="playlist-item__title">(.+?)<\/span>').findall(channel_source)
     for url,name in match:
         if (videoquality=="true"):
             url=url+"?quality=25&type=html"
@@ -72,9 +72,9 @@ def INDEX_VID_STREAM(name,url):
     channel_source=weblogin.openUrl(url)
     match=re.compile(',"link":"(.+?)","formats"').findall(channel_source)
     stream = match[0].replace("\/","/")
-    if 'rtmps' in stream:
-        xbmcgui.Dialog().notification('Switch to HTML 5 player','Switch to HTML 5 player',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
-        raise SystemExit
+    #if 'rtmps' in stream:
+    #    xbmcgui.Dialog().notification('Switch to HTML 5 player','Switch to HTML 5 player',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
+    #    raise SystemExit
     addLink('PLAY: '+name,stream,'')
         
     
@@ -83,9 +83,9 @@ def INDEX_CHANNELS(name,url):
     channel_source=weblogin.openUrl(url)
     match=re.compile('"link":"(.+?)","formats').findall(channel_source)
     stream = match[0].replace("\/","/")
-    if 'rtmps' in stream:
-        xbmcgui.Dialog().notification('Switch to HTML 5 player','Switch to HTML 5 player',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
-        raise SystemExit
+    #if 'rtmps' in stream:
+    #    xbmcgui.Dialog().notification('Switch to HTML 5 player','Switch to HTML 5 player',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
+    #    raise SystemExit
     addLink('PLAY: '+name,stream,'')
     
 def get_params():
