@@ -70,22 +70,27 @@ def INDEX_VID_CAT(name,url):
 
 def INDEX_VID_STREAM(name,url):
     channel_source=weblogin.openUrl(url)
-    match=re.compile(',"link":"(.+?)","formats"').findall(channel_source)
-    stream = match[0].replace("\/","/")
-    #if 'rtmps' in stream:
-    #    xbmcgui.Dialog().notification('Switch to HTML 5 player','Switch to HTML 5 player',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
-    #    raise SystemExit
+    try:
+        match=re.compile(',"link":"(.+?)","formats"').findall(channel_source)
+        stream = match[0].replace("\/","/")
+    except:
+        pass
+    if 'access-plans' in channel_source:
+        xbmcgui.Dialog().notification('[ Subscription Error ]','You don\'t have any valid access plan!',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
+        raise SystemExit
     addLink('PLAY: '+name,stream,'')
-        
     
 def INDEX_CHANNELS(name,url):
     channel_source=weblogin.doLogin('',username,password,url_login)
     channel_source=weblogin.openUrl(url)
-    match=re.compile('"link":"(.+?)","formats').findall(channel_source)
-    stream = match[0].replace("\/","/")
-    #if 'rtmps' in stream:
-    #    xbmcgui.Dialog().notification('Switch to HTML 5 player','Switch to HTML 5 player',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
-    #    raise SystemExit
+    try:
+        match=re.compile('"link":"(.+?)","formats').findall(channel_source)
+        stream = match[0].replace("\/","/")
+    except:
+        pass
+    if 'access-plans' in channel_source:
+        xbmcgui.Dialog().notification('[ Subscription Error ]','You don\'t have any valid access plan!',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
+        raise SystemExit
     addLink('PLAY: '+name,stream,'')
     
 def get_params():

@@ -51,7 +51,7 @@ def openUrl(url):
     updateCookie()
     return source
 	
-def doLogin(cookiepath,username,password,url_to_open):
+def doLogin(cookiepath,username,password,url_login):
     #check if user has supplied only a folder path, or a full path
     if not os.path.isfile(cookiepath):
         #if the user supplied only a folder path, append on to the end of the path a filename.
@@ -63,10 +63,9 @@ def doLogin(cookiepath,username,password,url_to_open):
         pass
 
     if username and password:
-        login_url=url_to_open
         #get the CSRF token
         regexCSRF = r"CSRF_TOKEN\":\"(.*)\",\""
-        req = urllib2.Request(login_url)
+        req = urllib2.Request(url_login)
         req.add_header('User-Agent', header_string)
         response = opener.open(req)
         html = response.read()
@@ -76,7 +75,7 @@ def doLogin(cookiepath,username,password,url_to_open):
             matchNum = matchNum + 1
             CSRF_TOKEN=match.group(1)
         #token gotten
-        req=urllib2.Request(login_url)
+        req=urllib2.Request(url_login)
         req.add_data('_token='+CSRF_TOKEN+'&username='+username+'&password='+password)
         req.add_header('User-Agent',header_string)
         response=opener.open(req)
