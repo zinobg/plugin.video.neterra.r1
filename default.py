@@ -21,16 +21,18 @@ import xbmcplugin,xbmcgui,xbmcaddon
 import weblogin
 
 # Getting username and password from addon settings
-addon=xbmcaddon.Addon()
-username=addon.getSetting('username')
-password=addon.getSetting('password')
-videoquality=addon.getSetting('highvideoquality')
-
+__settings__=xbmcaddon.Addon(id='plugin.video.neterra.r1')
+username=__settings__.getSetting('username')
+password=__settings__.getSetting('password')
+videoquality=__settings__.getSetting('highvideoquality')
 BASE='https://neterra.tv/'
 header_string='Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36'
 url_login=BASE+'sign-in'
 url_live=BASE+'live'
 url_videos=BASE+'videos'
+
+if not username or not password or not __settings__:
+    xbmcaddon.Addon().openSettings()
 
 def LIST_CHANNELS():
     channel_source=weblogin.doLogin('',username,password,url_login)
