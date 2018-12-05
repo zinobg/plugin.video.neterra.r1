@@ -44,7 +44,7 @@ def LIST_CHANNELS():
 def LIST_VID():
     channel_source=weblogin.doLogin('',username,password,url_login)
     channel_source=weblogin.openUrl(url_videos)
-    match=re.compile('<li>\s*.*<a href="(.+?)"\s*class="side-nav__item.*"\s*>(.+?)<\/a>').findall(channel_source)
+    match=re.compile('<li>\s*.*<a href="(.+?)"\s*class="side-nav__item.*"\s.*.\s*>(.+?)<\/a>').findall(channel_source)
     for url_chann,name in match:
         addDir(name,url_chann,2,'')
 
@@ -70,27 +70,15 @@ def INDEX_VID_CAT(name,url):
 
 def INDEX_VID_STREAM(name,url):
     channel_source=weblogin.openUrl(url)
-    try:
-        match=re.compile(',"link":"(.+?)","formats"').findall(channel_source)
-        stream = match[0].replace("\/","/")
-    except:
-        pass
-    if 'access-plans' in channel_source:
-        xbmcgui.Dialog().notification('[ Subscription Error ]','You don\'t have any valid access plan!',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
-        raise SystemExit
+    match=re.compile(',"link":"(.+?)","formats"').findall(channel_source)
+    stream = match[0].replace("\/","/")
     addLink('PLAY: '+name,stream,'')
     
 def INDEX_CHANNELS(name,url):
     channel_source=weblogin.doLogin('',username,password,url_login)
     channel_source=weblogin.openUrl(url)
-    try:
-        match=re.compile('"link":"(.+?)","formats').findall(channel_source)
-        stream = match[0].replace("\/","/")
-    except:
-        pass
-    if 'access-plans' in channel_source:
-        xbmcgui.Dialog().notification('[ Subscription Error ]','You don\'t have any valid access plan!',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
-        raise SystemExit
+    match=re.compile('"link":"(.+?)","formats').findall(channel_source)
+    stream = match[0].replace("\/","/")
     addLink('PLAY: '+name,stream,'')
     
 def get_params():

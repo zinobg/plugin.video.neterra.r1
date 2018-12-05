@@ -25,10 +25,8 @@ def initCookie():
     # if exist load file and cookie information 
     if (os.path.isfile(cookiepath)):
         cj.load(cookiepath, False, False)
-        #for index, cookie in enumerate(cj):
-            #False          
-    else:             
-        False 
+    else:
+        False
 
 # save cookie to file
 def updateCookie():
@@ -40,17 +38,22 @@ def check_login(source_login,username):
         return True
     else:
         return False
-		
+
 def openUrl(url):
     initCookie()
     req=urllib2.Request(url)
     req.add_header('User-Agent',header_string)
-    response=urllib2.urlopen(req)
+    try:
+        response=urllib2.urlopen(req)
+    except urllib2.HTTPError as err:
+        if err.code==402:
+            xbmcgui.Dialog().notification('[ Subscription ERROR ]','There\'s no active paid access plan!',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
+            raise SystemExit
     source=response.read()
     response.close()
     updateCookie()
     return source
-	
+
 def doLogin(cookiepath,username,password,url_login):
     #check if user has supplied only a folder path, or a full path
     if not os.path.isfile(cookiepath):
