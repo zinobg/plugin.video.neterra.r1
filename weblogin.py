@@ -16,21 +16,22 @@
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os,re,urllib,urllib2
-import xbmc, xbmcgui
-import cookielib
+import os,re,urllib2
+import xbmcgui
+from xbmc import translatePath as tP
+from cookielib import LWPCookieJar as LWPCJ 
 
 # load cookie
 def initCookie():
     # if exist load file and cookie information 
-    if (os.path.isfile(cookiepath)):
-        cj.load(cookiepath, False, False)
+    if os.path.isfile(cookiepath):
+        LWPCJ().load(cookiepath, False, False)
     else:
         False
 
 # save cookie to file
 def updateCookie():
-    cj.save(cookiepath)
+    LWPCJ().save(cookiepath)
 
 def check_login(source_login,username):
     logged_in_string=username
@@ -93,13 +94,12 @@ def doLogin(cookiepath,username,password,url_login):
             raise SystemExit
 
 cookie_file='cookies_neterratv.r1.lwp'
-cookie_path=os.path.join(xbmc.translatePath('special://temp'))
+cookie_path=os.path.join(tP('special://temp'))
 header_string='Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36'
 
 # cookies
 cookiepath=''
 cookiepath=os.path.join(cookiepath,cookie_path,cookie_file)
-cj=cookielib.LWPCookieJar()
-opener=urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+opener=urllib2.build_opener(urllib2.HTTPCookieProcessor(LWPCJ()))
 urllib2.install_opener(opener)
 initCookie()
