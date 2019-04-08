@@ -72,14 +72,14 @@ def INDEX_VID_CAT(name,url):
 
 def INDEX_VID_STREAM(name,url):
     channel_source=weblogin.openUrl(url)
-    match=re.compile(',"link":"(.+?)","formats"').findall(channel_source)
+    match=re.compile('"link":"(.+?)"').findall(channel_source)
     stream = match[0].replace("\/","/")
     addLink('PLAY: '+name,stream,'')
     
 def INDEX_CHANNELS(name,url):
     channel_source=weblogin.doLogin('',username,password,url_login)
     channel_source=weblogin.openUrl(url)
-    match=re.compile('"link":"(.+?)","formats').findall(channel_source)
+    match=re.compile('"link":"(.+?)"').findall(channel_source)
     stream = match[0].replace("\/","/")
     addLink('PLAY: '+name,stream,'')
     
