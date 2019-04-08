@@ -99,7 +99,7 @@ header_string='Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, l
 # cookies
 cookiepath=''
 cookiepath=os.path.join(cookiepath,cookie_path,cookie_file)
-cj = cookielib.LWPCookieJar()
+cj=cookielib.LWPCookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 urllib2.install_opener(opener)
 initCookie()
