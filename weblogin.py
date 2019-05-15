@@ -48,7 +48,7 @@ def openUrl(url):
         response=urllib2.urlopen(req)
     except urllib2.HTTPError as err:
         if err.code==402:
-            xbmcgui.Dialog().notification('[ Subscription ERROR ]','There\'s no active paid access plan!',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
+            xbmcgui.Dialog().notification('[ Subscription ERROR ]','There\'s no active subscription paid!',xbmcgui.NOTIFICATION_ERROR,8000,sound=True)
             raise SystemExit
     source=response.read()
     response.close()
